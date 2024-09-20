@@ -1,0 +1,19 @@
+{
+  "name": "slack-channel-message",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --env-file=.env src/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@slack/bolt": "^3.21.4",
+    "mongoose": "^8.6.3",
+    "slack-block-builder": "^2.8.0"
+  }
+}

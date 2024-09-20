@@ -1,0 +1,51 @@
+{
+    "display_information": {
+        "name": "slack-channel-message"
+    },
+    "features": {
+        "bot_user": {
+            "display_name": "slack-channel-message",
+            "always_online": false
+        },
+        "slash_commands": [
+            {
+                "command": "/issue",
+                "url": "https://raccoon-robust-likely.ngrok-free.app/slack/events",
+                "description": "Launches an issue modal",
+                "should_escape": false
+            }
+        ]
+    },
+    "oauth_config": {
+        "scopes": {
+            "bot": [
+                "channels:history",
+                "channels:read",
+                "chat:write",
+                "chat:write.customize",
+                "chat:write.public",
+                "commands",
+                "groups:history",
+                "groups:read",
+                "files:read",
+                "files:write"
+            ]
+        }
+    },
+    "settings": {
+        "event_subscriptions": {
+            "request_url": "https://raccoon-robust-likely.ngrok-free.app/slack/events",
+            "bot_events": [
+                "message.channels",
+                "message.groups"
+            ]
+        },
+        "interactivity": {
+            "is_enabled": true,
+            "request_url": "https://raccoon-robust-likely.ngrok-free.app/slack/events"
+        },
+        "org_deploy_enabled": false,
+        "socket_mode_enabled": false,
+        "token_rotation_enabled": false
+    }
+}

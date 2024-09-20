@@ -1,0 +1,80 @@
+import { Issue } from "../../database/model/issue-model.js";
+import { Message } from "../../database/model/message-model.js";
+import {
+  constructAcknowledge,
+  constructUpdateIssueMessage,
+} from "../../helpers/message-constructor.js";
+import {
+  updateIssueAcknowledgeId,
+  recordMessage,
+} from "../../helpers/message-helper.js";
+
+export const actionAcknowledge = async ({
+  action,
+  ack,
+  respond,
+  say,
+  payload,
+  body,
+  client,
+}) => {
+  await ack();
+
+  // console.log("acknowledge action", action);
+
+  // console.log("payload", payload);
+
+  // console.log("body", body);
+  const senderUserId = body.user.id;
+
+  // this is issue._id
+  const actionValue = action.value;
+  // console.log("actionValue", actionValue);
+
+  const issueRecord = await Issue.findById(actionValue);
+
+  // console.log("issueRecord", issueRecord);
+  const message_id = issueRecord.message_id;
+
+  const messageRecord = await Message.findById(message_id);
+  // console.log("messageRecord", messageRecord);
+
+  const acknowledgeMessage = constructAcknowledge(
+    messageRecord.senderChannelId,
+    messageRecord.senderUserId,
+    messageRecord.message_data.text
+  );
+
+  const postedMessage = await client.chat.postMessage(
+    JSON.parse(acknowledgeMessage)
+  );
+
+  const messageType = "ACKNOWLEDGED";
+  const record = await recordMessage(
+    postedMessage,
+    senderUserId,
+    messageRecord.channel,
+    messageType
+  );
+
+  // console.log("record", record);
+
+  await updateIssueAcknowledgeId(actionValue, record.id);
+
+  const updateMessage = constructUpdateIssueMessage(
+    messageRecord.message_data.text,
+    messageRecord.channel,
+    messageRecord.ts,
+    issueRecord.id
+  );
+
+  //update the original issue message.
+  await client.chat.update(JSON.parse(updateMessage));
+
+  // reply to thread who acknowledge it
+  await client.chat.postMessage({
+    channel: messageRecord.channel,
+    text: `<@${senderUserId}> acknowledged this issue.`,
+    thread_ts: messageRecord.ts,
+  });
+};
