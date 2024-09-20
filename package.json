@@ -15,5 +15,8 @@
     "@slack/bolt": "^3.21.4",
     "mongoose": "^8.6.3",
     "slack-block-builder": "^2.8.0"
+  },
+  "devDependencies": {
+    "serverless-offline": "^13.8.0"
   }
 }

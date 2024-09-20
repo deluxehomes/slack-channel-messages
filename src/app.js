@@ -1,13 +1,18 @@
 import pkg from "@slack/bolt";
-const { App, SocketModeReceiver } = pkg;
+const { App, SocketModeReceiver, AwsLambdaReceiver } = pkg;
 import { registerListeners } from "./listeners/index.js";
 import { connect } from "./database/db-connect.js";
 
-const receiver = new SocketModeReceiver({
+const socketReceiver = new SocketModeReceiver({
   appToken: process.env.SLACK_APP_TOKEN,
   installerOptions: {
     port: process.env.PORT,
   },
+});
+
+const awsLambdaReceiver = new AwsLambdaReceiver({
+  signingSecret: process.env.SLACK_SIGNING_SECRET,
+  // appToken: process.env.SLACK_APP_TOKEN,
 });
 
 // const app = new App({
@@ -16,7 +21,8 @@ const receiver = new SocketModeReceiver({
 // });
 
 const app = new App({
-  signingSecret: process.env.SLACK_SIGNING_SECRET,
+  // signingSecret: process.env.SLACK_SIGNING_SECRET,
+  receiver: awsLambdaReceiver,
   port: process.env.PORT || 3000,
   token: process.env.SLACK_BOT_TOKEN,
   customRoutes: [
@@ -29,27 +35,41 @@ const app = new App({
       },
     },
   ],
-  // scopes: [
-  //   "channels:history",
-  //   "channels:read",
-  //   "chat:write",
-  //   "chat:write.customize",
-  //   "chat:write.public",
-  //   "commands",
-  //   "groups:history",
-  //   "groups:read",
-  //   "files:read",
-  //   "files:write",
-  // ],
 });
 
 registerListeners(app);
 
-(async () => {
-  await connect().then((result) => {
-    console.log("Database is connected");
-    app.start();
+// comment this if running aws lambda
+// (async () => {
+//   await connect().then((result) => {
+//     console.log("Database is connected");
+//     app.start();
 
-    console.log("⚡️ Bolt app is running!");
-  });
-})();
+//     console.log("⚡️ Bolt app is running!");
+//   });
+// })();
+
+// export const handler = async (event, context, callback) => {
+//   await connect().then((result) => {
+//     console.log("db connected");
+//   });
+//   const handler = await awsLambdaReceiver.start();
+//   return handler(event, context, callback);
+// };
+
+let dbConnection = null;
+const initDb = async () => {
+  if (!dbConnection) {
+    dbConnection = await connect(); // Assuming connect is an async function
+    console.log("DB connected");
+  }
+};
+
+export const handler = async (event, context, callback) => {
+  // Ensure the DB is connected
+  await initDb();
+
+  // Handle Slack events via the AWS Lambda Receiver
+  const slackHandler = await awsLambdaReceiver.toHandler();
+  return slackHandler(event, context, callback);
+};
