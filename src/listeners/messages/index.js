@@ -1,7 +1,7 @@
 import { messageThread } from "./message-thread.js";
 
 const noBotMessages = async ({ message, next }) => {
-  //   console.log("message", message);
+  console.log("message", message);
 
   const threadTs = message.thread_ts;
   //   console.log("threadts", threadTs);

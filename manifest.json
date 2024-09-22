@@ -10,7 +10,7 @@
     "slash_commands": [
       {
         "command": "/issue",
-        "url": "https://nz0ucbwb3f.execute-api.us-east-1.amazonaws.com/dev/slack/events",
+        "url": "https://raccoon-robust-likely.ngrok-free.app/slack/events",
         "description": "Launches an issue modal",
         "should_escape": false
       }
@@ -34,12 +34,12 @@
   },
   "settings": {
     "event_subscriptions": {
-      "request_url": "https://nz0ucbwb3f.execute-api.us-east-1.amazonaws.com/dev/slack/events",
+      "request_url": "https://raccoon-robust-likely.ngrok-free.app/slack/events",
       "bot_events": ["message.channels", "message.groups"]
     },
     "interactivity": {
       "is_enabled": true,
-      "request_url": "https://nz0ucbwb3f.execute-api.us-east-1.amazonaws.com/dev/slack/events"
+      "request_url": "https://raccoon-robust-likely.ngrok-free.app/slack/events"
     },
     "org_deploy_enabled": false,
     "socket_mode_enabled": false,

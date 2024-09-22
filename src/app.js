@@ -21,8 +21,8 @@ const awsLambdaReceiver = new AwsLambdaReceiver({
 // });
 
 const app = new App({
-  // signingSecret: process.env.SLACK_SIGNING_SECRET,
-  receiver: awsLambdaReceiver,
+  signingSecret: process.env.SLACK_SIGNING_SECRET,
+  // receiver: awsLambdaReceiver,
   port: process.env.PORT || 3000,
   token: process.env.SLACK_BOT_TOKEN,
   customRoutes: [
@@ -40,36 +40,28 @@ const app = new App({
 registerListeners(app);
 
 // comment this if running aws lambda
-// (async () => {
-//   await connect().then((result) => {
-//     console.log("Database is connected");
-//     app.start();
+(async () => {
+  await connect().then((result) => {
+    console.log("Database is connected");
+    app.start();
 
-//     console.log("⚡️ Bolt app is running!");
-//   });
-// })();
+    console.log("⚡️ Bolt app is running!");
+  });
+})();
 
-// export const handler = async (event, context, callback) => {
-//   await connect().then((result) => {
-//     console.log("db connected");
-//   });
-//   const handler = await awsLambdaReceiver.start();
-//   return handler(event, context, callback);
+// let dbConnection = null;
+// const initDb = async () => {
+//   if (!dbConnection) {
+//     dbConnection = await connect(); // Assuming connect is an async function
+//     console.log("DB connected");
+//   }
 // };
 
-let dbConnection = null;
-const initDb = async () => {
-  if (!dbConnection) {
-    dbConnection = await connect(); // Assuming connect is an async function
-    console.log("DB connected");
-  }
-};
+// export const handler = async (event, context, callback) => {
+//   // Ensure the DB is connected
+//   await initDb();
 
-export const handler = async (event, context, callback) => {
-  // Ensure the DB is connected
-  await initDb();
-
-  // Handle Slack events via the AWS Lambda Receiver
-  const slackHandler = await awsLambdaReceiver.toHandler();
-  return slackHandler(event, context, callback);
-};
+//   // Handle Slack events via the AWS Lambda Receiver
+//   const slackHandler = await awsLambdaReceiver.toHandler();
+//   return slackHandler(event, context, callback);
+// };
