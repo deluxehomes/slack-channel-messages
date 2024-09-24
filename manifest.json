@@ -9,10 +9,17 @@
     },
     "slash_commands": [
       {
-        "command": "/bot-admin",
+        "command": "/finance-bot",
         "url": "https://rj3nidqzuf.execute-api.us-east-1.amazonaws.com/dev/slack/events",
-        "description": "Will send message to admin-channel",
-        "usage_hint": "hello admin-channel",
+        "description": "Send message to team-finance channel",
+        "usage_hint": "hello team-finance channel",
+        "should_escape": false
+      },
+      {
+        "command": "/support-bot",
+        "url": "https://rj3nidqzuf.execute-api.us-east-1.amazonaws.com/dev/slack/events",
+        "description": "Send message to team-guest-support channel",
+        "usage_hint": "hello team-guest-support channel",
         "should_escape": false
       }
     ]
