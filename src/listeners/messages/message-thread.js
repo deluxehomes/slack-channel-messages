@@ -64,12 +64,13 @@ export const messageThread = async ({
     messageToSend = messageToSend + `${images}`;
   }
 
+  const receiverMessage = `${displayName}: ${messageToSend}`;
   await client.chat.postMessage({
     channel: recordToSend.channel,
-    text: messageToSend,
+    text: receiverMessage,
     thread_ts: recordToSend.ts,
 
-    icon_url: userIcon,
-    username: displayName,
+    // icon_url: userIcon,
+    // username: displayName,
   });
 };

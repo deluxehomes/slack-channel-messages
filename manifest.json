@@ -1,10 +1,10 @@
 {
   "display_information": {
-    "name": "slack-channel-message"
+    "name": "Deluxe Bot"
   },
   "features": {
     "bot_user": {
-      "display_name": "slack-channel-message",
+      "display_name": "Deluxe Bot",
       "always_online": false
     },
     "slash_commands": [
