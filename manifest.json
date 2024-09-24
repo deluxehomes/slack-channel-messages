@@ -1,10 +1,10 @@
 {
   "display_information": {
-    "name": "Deluxe Bot"
+    "name": "Deluxe"
   },
   "features": {
     "bot_user": {
-      "display_name": "Deluxe Bot",
+      "display_name": "Deluxe",
       "always_online": false
     },
     "slash_commands": [
