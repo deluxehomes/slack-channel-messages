@@ -8,6 +8,7 @@ import {
   updateIssueAcknowledgeId,
   recordMessage,
 } from "../../helpers/message-helper.js";
+import { ClickUp } from "../../services/clickup.js";
 
 export const actionAcknowledge = async ({
   action,
@@ -49,23 +50,37 @@ export const actionAcknowledge = async ({
     JSON.parse(acknowledgeMessage)
   );
 
+  //TODO
+  const clickup = new ClickUp(`${process.env.CLICK_UP_API_KEY}`);
+  const clickupResponse = await clickup.newTask(
+    process.env.CLICK_UP_SLACK_LIST_ID,
+    {
+      name: messageRecord.title,
+      content: messageRecord.description,
+      status: "to do",
+    }
+  );
+
+  console.log("clickup response", clickupResponse);
+
+  // console.log("Message", Message);
+
   const messageType = "ACKNOWLEDGED";
   const record = await recordMessage(
+    messageRecord.title,
+    messageRecord.description,
     postedMessage,
     senderUserId,
     messageRecord.channel,
     messageType
   );
 
-  // console.log("record", record);
-
-  await updateIssueAcknowledgeId(actionValue, record.id);
+  await updateIssueAcknowledgeId(actionValue, record.id, clickupResponse.id);
 
   const updateMessage = constructUpdateIssueMessage(
     messageRecord.message_data.text,
     messageRecord.channel,
-    messageRecord.ts,
-    issueRecord.id
+    messageRecord.ts
   );
 
   //update the original issue message.

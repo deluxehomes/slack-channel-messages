@@ -7,13 +7,20 @@ const messageDataSchema = mongoose.Schema({
   text: String,
 });
 
+const MessageType = ["SENDER", "RECEIVER"];
+
 const messageSchema = mongoose.Schema({
   channel: String,
   ts: String,
   message_data: messageDataSchema,
-  senderUserId: String, // the user who execute the command
-  senderChannelId: String, // where the command is executed
-  message_type: String, //command type(/issue)
+  // title: String,
+  // description: String,
+  senderUserId: String,
+  senderChannelId: String,
+  message_type: {
+    type: String,
+    enum: MessageType,
+  },
 });
 
 export const Message = mongoose.model("Message", messageSchema);

@@ -30,8 +30,10 @@ export const postIssueCommand = async ({
     providedValues.channelId.selectChannelId.selected_conversation;
   // console.log("channelIdToReceiver", channelIdToReceiver);
 
-  const messageToReceiver = providedValues.description.description.value;
-  // console.log("messageToReceiver", messageToReceiver);
+  const messageToReceiverDescription =
+    providedValues.description.description.value;
+
+  const messageToReceiverTitle = providedValues.title.title.value;
 
   const fileUploads = providedValues.fileUploadId.actionFileUploadId.files;
 
@@ -39,14 +41,14 @@ export const postIssueCommand = async ({
   const issueRecord = await recordIssue();
 
   const jsonMessage = constructPostIssueMessage(
-    messageToReceiver,
+    messageToReceiverTitle,
+    messageToReceiverDescription,
     channelIdToReceiver,
     issueRecord.id
   );
 
   const postedMessage = await client.chat.postMessage(JSON.parse(jsonMessage));
-  // console.log("postedMessage", postedMessage);
-  // console.log("blocks", postedMessage.message.blocks);
+  // console.log("postedMessage", po sage.message.blocks);
   const threadTs = postedMessage.ts;
   // console.log("threadTs", threadTs);
 
@@ -55,6 +57,7 @@ export const postIssueCommand = async ({
     const permalinks = [];
     for (const file of fileUploads) {
       // console.log("url_private", file.permalink);
+      console.log("file", file);
       permalinks.push(file.permalink);
     }
 
@@ -68,6 +71,8 @@ export const postIssueCommand = async ({
   }
 
   const messageRecord = await recordMessage(
+    messageToReceiverTitle,
+    messageToReceiverDescription,
     postedMessage,
     senderUserId,
     senderChannelId,

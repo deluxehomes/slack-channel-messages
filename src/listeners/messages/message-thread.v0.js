@@ -17,38 +17,25 @@ export const messageThread = async ({
   // console.log("message", message);
 
   // console.log("payload", payload);
-  let messageToSend = message.text;
 
   const threadTs = message.thread_ts;
 
   const messageRecord = await Message.findOne({ ts: threadTs });
-  const messageType = messageRecord.message_type; //RECEIVER | SENDER
+  const messageType = messageRecord.message_type;
 
-  let issueRecord;
-  let recordToSend;
-  if (messageType === "RECEIVER") {
-    issueRecord = await Issue.findOne({
-      receiver_message_id: messageRecord.id,
-    });
+  // console.log("messageRecord", messageRecord);
+  const issueRecord = await findIssueRecordByMessageId(messageRecord);
+  // console.log("issueRecord", issueRecord);
 
-    recordToSend = await Message.findById(issueRecord.sender_message_id);
+  let record;
+  if (messageType === "ACKNOWLEDGED") {
+    record = await Message.findOne({ _id: issueRecord.message_id });
   } else {
-    issueRecord = await Issue.findOne({
-      sender_message_id: messageRecord.id,
-    });
-    recordToSend = await Message.findById(issueRecord.receiver_message_id);
+    record = await Message.findOne({ _id: issueRecord.acknowledge_message_id });
   }
-  // console.log("recordToSend", recordToSend);
 
-  const senderUserId = message.user;
-
-  const userInfo = await client.users.info({
-    user: senderUserId,
-  });
-
-  const userIcon = userInfo.user.profile.image_original;
-  const displayName = userInfo.user.profile.display_name;
-
+  // console.log("record", record);
+  let textMessage = message.text;
   const fileUploads = message.files;
 
   if (fileUploads && fileUploads.length > 0) {
@@ -61,15 +48,12 @@ export const messageThread = async ({
 
     const images = permalinks.map((permalink) => `<${permalink}| >`).join("");
 
-    messageToSend = messageToSend + `${images}`;
+    textMessage = textMessage + `${images}`;
   }
 
   await client.chat.postMessage({
-    channel: recordToSend.channel,
-    text: messageToSend,
-    thread_ts: recordToSend.ts,
-
-    icon_url: userIcon,
-    username: displayName,
+    channel: record.channel,
+    text: textMessage,
+    thread_ts: record.ts,
   });
 };

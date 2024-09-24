@@ -29,12 +29,7 @@ export const constructAcknowledge = (
     .buildToJSON();
 };
 
-export const constructUpdateIssueMessage = (
-  message,
-  channelId,
-  threadTs,
-  issueId
-) => {
+export const constructUpdateIssueMessage = (message, channelId, threadTs) => {
   const messagePayload = {
     channel: channelId,
     text: `${message}`,
@@ -47,21 +42,11 @@ export const constructUpdateIssueMessage = (
   return Message(messagePayload)
     .blocks(
       Blocks.Section({
-        text: `${message}`,
-        blockId: issueId,
-      }).accessory(
-        Elements.StaticSelect({
-          actionId: "actionUpdateIssueStatus",
-          placeholder: "Select a status",
-        }).options(
-          status.map((s) =>
-            Bits.Option({
-              text: s,
-              value: s,
-            })
-          )
-        )
-      ),
+        text: `An issue has been raised!`,
+      }),
+      Blocks.Context({
+        blockId: "content-id",
+      }).elements(Md.blockquote(message)),
       Blocks.Divider(),
       Blocks.Context({
         blockId: "context-id",
@@ -71,14 +56,16 @@ export const constructUpdateIssueMessage = (
 };
 
 export const constructPostIssueMessage = (
-  message,
+  messageTitle,
+  messageDescription,
   channelId,
   issueRecordId,
   threadTs = null
 ) => {
+  messageDescription = `*${messageTitle}*\n${messageDescription}`;
   const messagePayload = {
     channel: channelId,
-    text: `${message}`,
+    text: `${messageDescription}`,
   };
 
   if (threadTs && threadTs != null) {
@@ -88,26 +75,50 @@ export const constructPostIssueMessage = (
   return Message(messagePayload)
     .blocks(
       Blocks.Section({
-        text: `${message}`,
+        text: `An issue has been raised!`,
       }),
+      Blocks.Context({
+        blockId: "content-id",
+      }).elements(Md.blockquote(messageDescription)),
       Blocks.Divider(),
       Blocks.Actions().elements(
-        // Elements.Button({
-        //   text: "Decline",
-        //   actionId: "actionDecline",
-        //   value: `${issueRecordId}`,
-        // }).danger(),
         Elements.Button({
           text: "Acknowledge",
           actionId: "actionAcknowledge",
           value: `${issueRecordId}`,
         }).primary()
       ),
-      // Blocks.Divider(),
       Blocks.Context({
         blockId: "context-id",
       }).elements(
         Md.quote("Your replies will not be posted if not Acknowledged.")
+      )
+    )
+    .buildToJSON();
+};
+
+export const constructClickUpNotification = (
+  channelId,
+  threadTs,
+  message,
+  url
+) => {
+  return Message({
+    channel: channelId,
+    text: message,
+    // ts: threadTs,
+    threadTs,
+  })
+    .blocks(
+      Blocks.Section({
+        text: message,
+      }),
+      Blocks.Actions().elements(
+        Elements.Button({
+          text: "View Task",
+          actionId: "actionViewTask",
+          url: url,
+        })
       )
     )
     .buildToJSON();

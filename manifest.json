@@ -9,9 +9,10 @@
     },
     "slash_commands": [
       {
-        "command": "/issue",
-        "url": "https://raccoon-robust-likely.ngrok-free.app/slack/events",
-        "description": "Launches an issue modal",
+        "command": "/bot-admin",
+        "url": "https://rj3nidqzuf.execute-api.us-east-1.amazonaws.com/dev/slack/events",
+        "description": "Will send message to admin-channel",
+        "usage_hint": "hello admin-channel",
         "should_escape": false
       }
     ]
@@ -25,21 +26,22 @@
         "chat:write.customize",
         "chat:write.public",
         "commands",
+        "files:read",
+        "files:write",
         "groups:history",
         "groups:read",
-        "files:read",
-        "files:write"
+        "users:read"
       ]
     }
   },
   "settings": {
     "event_subscriptions": {
-      "request_url": "https://raccoon-robust-likely.ngrok-free.app/slack/events",
+      "request_url": "https://rj3nidqzuf.execute-api.us-east-1.amazonaws.com/dev/slack/events",
       "bot_events": ["message.channels", "message.groups"]
     },
     "interactivity": {
       "is_enabled": true,
-      "request_url": "https://raccoon-robust-likely.ngrok-free.app/slack/events"
+      "request_url": "https://rj3nidqzuf.execute-api.us-east-1.amazonaws.com/dev/slack/events"
     },
     "org_deploy_enabled": false,
     "socket_mode_enabled": false,

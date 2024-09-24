@@ -19,6 +19,9 @@ export const issueModal = (body) => {
           .excludeExternalSharedChannels(true)
           .filter("private", "public")
       ),
+      Blocks.Input({ label: "Title", blockId: "title" }).element(
+        Elements.TextInput({ actionId: "title" }).multiline(false)
+      ),
       Blocks.Input({ label: "Description", blockId: "description" }).element(
         Elements.TextInput({ actionId: "description" }).multiline(true)
       ),
