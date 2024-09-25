@@ -25,6 +25,8 @@ export const adminChannelCommand = async ({
 
   let commandMessage = command.text;
 
+  commandMessage = commandMessage.replace(/(@\w+)/g, "<$1>");
+
   const adminChannelID = process.env.ADMIN_CHANNEL_ID;
 
   const senderChannelId = command.channel_id;
