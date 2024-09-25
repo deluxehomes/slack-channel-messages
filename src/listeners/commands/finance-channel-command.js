@@ -5,6 +5,7 @@
 // import { Message } from "../../database/model/message-model.js";
 import { recordMessageFromCommand } from "../../helpers/message-helper.js";
 import { Issue } from "../../database/model/issue-model.js";
+import { convertUserFromText } from "../../helpers/users.js";
 
 export const financeChannelCommand = async ({
   command,
@@ -25,7 +26,7 @@ export const financeChannelCommand = async ({
 
   let commandMessage = command.text;
 
-  commandMessage = commandMessage.replace(/(@\w+)/g, "<$1>");
+  commandMessage = convertUserFromText(commandMessage);
 
   const adminChannelID = process.env.FINANCE_CHANNEL_ID;
 
@@ -38,7 +39,8 @@ export const financeChannelCommand = async ({
   });
 
   const userIcon = userInfo.user.profile.image_original;
-  const displayName = userInfo.user.profile.display_name;
+  let displayName = userInfo.user.profile.display_name;
+  if (displayName === "") displayName = userInfo.user.profile.real_name;
 
   const receiverMessage = `${displayName}: ${commandMessage}`;
   const postedMessageToAdminChannel = await client.chat.postMessage({

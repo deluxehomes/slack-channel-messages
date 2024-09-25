@@ -1,6 +1,7 @@
 import { Message } from "../../database/model/message-model.js";
 import { Issue } from "../../database/model/issue-model.js";
-import { findIssueRecordByMessageId } from "../../helpers/message-helper.js";
+// import { findIssueRecordByMessageId } from "../../helpers/message-helper.js";
+import { convertUserFromText } from "../../helpers/users.js";
 
 export const messageThread = async ({
   context,
@@ -18,6 +19,7 @@ export const messageThread = async ({
 
   // console.log("payload", payload);
   let messageToSend = message.text;
+  messageToSend = convertUserFromText(messageToSend);
 
   const threadTs = message.thread_ts;
 
