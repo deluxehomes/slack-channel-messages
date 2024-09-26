@@ -24,13 +24,18 @@ export const financeChannelCommand = async ({
 
   //   console.log("payload", payload);
 
-  let commandMessage = command.text;
-
-  commandMessage = convertUserFromText(commandMessage);
-
   const adminChannelID = process.env.FINANCE_CHANNEL_ID;
 
   const senderChannelId = command.channel_id;
+
+  if (adminChannelID === senderChannelId) {
+    await respond(`Cannot send /finance-bot command in same channel!`);
+    return;
+  }
+
+  let commandMessage = command.text;
+
+  commandMessage = convertUserFromText(commandMessage);
 
   const senderUserId = command.user_id;
 

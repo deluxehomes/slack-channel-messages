@@ -24,13 +24,17 @@ export const supportChannelCommand = async ({
 
   //   console.log("payload", payload);
 
+  const adminChannelID = process.env.SUPPORT_CHANNEL_ID;
+  const senderChannelId = command.channel_id;
+
+  if (adminChannelID === senderChannelId) {
+    await respond(`Cannot send /support-bot command in same channel!`);
+    return;
+  }
+
   let commandMessage = command.text;
 
   commandMessage = convertUserFromText(commandMessage);
-
-  const adminChannelID = process.env.SUPPORT_CHANNEL_ID;
-
-  const senderChannelId = command.channel_id;
 
   const senderUserId = command.user_id;
 
