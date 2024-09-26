@@ -1,7 +1,7 @@
 import pkg from "@slack/bolt";
 const { App, SocketModeReceiver, AwsLambdaReceiver } = pkg;
 import { registerListeners } from "./listeners/index.js";
-import { connect } from "./database/db-connect.js";
+import { connect, isDbConnected } from "./database/db-connect.js";
 
 const socketReceiver = new SocketModeReceiver({
   appToken: process.env.SLACK_APP_TOKEN,
@@ -49,10 +49,9 @@ registerListeners(app);
 //   });
 // })();
 
-let dbConnection = null;
 const initDb = async () => {
-  if (!dbConnection) {
-    dbConnection = await connect(); // Assuming connect is an async function
+  if (!isDbConnected()) {
+    await connect(); // Assuming connect is an async function
     console.log("DB connected");
   }
 };
@@ -62,6 +61,6 @@ export const handler = async (event, context, callback) => {
   await initDb();
 
   // Handle Slack events via the AWS Lambda Receiver
-  const slackHandler = await awsLambdaReceiver.toHandler();
+  const slackHandler = awsLambdaReceiver.toHandler();
   return slackHandler(event, context, callback);
 };

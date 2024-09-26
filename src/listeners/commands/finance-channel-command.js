@@ -16,7 +16,7 @@ export const financeChannelCommand = async ({
   body,
   client,
 }) => {
-  await ack();
+  ack();
 
   //   console.log("body", body);
 

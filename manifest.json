@@ -10,13 +10,13 @@
     "slash_commands": [
       {
         "command": "/finance-bot",
-        "url": "https://raccoon-robust-likely.ngrok-free.app/dev/slack/events",
+        "url": "https://45jrniegzd.execute-api.us-east-1.amazonaws.com/dev/slack/events",
         "description": "Send message to Finance Channel",
         "should_escape": false
       },
       {
         "command": "/support-bot",
-        "url": "https://raccoon-robust-likely.ngrok-free.app/dev/slack/events",
+        "url": "https://45jrniegzd.execute-api.us-east-1.amazonaws.com/dev/slack/events",
         "description": "Send message to Guest Support Channel",
         "should_escape": false
       }
@@ -42,12 +42,12 @@
   },
   "settings": {
     "event_subscriptions": {
-      "request_url": "https://raccoon-robust-likely.ngrok-free.app/dev/slack/events",
+      "request_url": "https://45jrniegzd.execute-api.us-east-1.amazonaws.com/dev/slack/events",
       "bot_events": ["message.channels", "message.groups"]
     },
     "interactivity": {
       "is_enabled": true,
-      "request_url": "https://raccoon-robust-likely.ngrok-free.app/dev/slack/events"
+      "request_url": "https://45jrniegzd.execute-api.us-east-1.amazonaws.com/dev/slack/events"
     },
     "org_deploy_enabled": false,
     "socket_mode_enabled": false,
