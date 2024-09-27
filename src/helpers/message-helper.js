@@ -22,6 +22,27 @@ export const recordMessageFromCommand = async (
   });
 };
 
+export const recordOriginalMessage = async (
+  postedMessage,
+  senderUserId,
+  senderChannelId,
+  messageType
+) => {
+  return await Message.create({
+    channel: postedMessage.channel,
+    ts: postedMessage.ts,
+    message_data: {
+      user: postedMessage.user,
+      type: postedMessage.type,
+      ts: postedMessage.ts,
+      text: postedMessage.text,
+    },
+    senderUserId: senderUserId,
+    senderChannelId: senderChannelId,
+    message_type: messageType,
+  });
+};
+
 export const recordMessage = async (
   title,
   description,

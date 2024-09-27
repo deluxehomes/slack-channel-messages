@@ -22,7 +22,7 @@ export const messageThread = async ({
   let messageToSend = message.text;
 
   if (messageToSend.indexOf("#") > -1 && isContainChannel(messageToSend)) {
-    hashMessage(messageToSend, client, message.channel, message.user);
+    hashMessage(message, client);
     return;
   }
 

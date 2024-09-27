@@ -1,16 +1,22 @@
 import { convertUserFromText } from "../../helpers/users.js";
-import { getChannelId } from "../../helpers/channels.js";
-import { recordMessageFromCommand } from "../../helpers/message-helper.js";
+import {
+  getChannelIds,
+  validChannels,
+  getChannels,
+} from "../../helpers/channels.js";
+import {
+  recordMessageFromCommand,
+  recordOriginalMessage,
+} from "../../helpers/message-helper.js";
 import { Issue } from "../../database/model/issue-model.js";
 
-export const hashMessage = async (
-  messageToSend,
-  client,
-  senderChannelId,
-  senderUserId
-) => {
+export const hashMessage = async (message, client) => {
+  let messageToSend = message.text;
+  let senderChannelId = message.channel;
+  let senderUserId = message.user;
+
   console.log("processing hash channel");
-  const channelIds = getChannelId(messageToSend);
+  const channelIds = getChannelIds(messageToSend);
   console.log(channelIds);
   if (channelIds === null || channelIds.length === 0) return;
 
@@ -47,19 +53,45 @@ export const hashMessage = async (
     involvedMessageIds.push(recordFromReceiver.id);
   }
 
-  const postedMessageToSenderChannel = await client.chat.postMessage({
-    channel: senderChannelId,
-    text: messageToSend,
-    icon_url: userIcon,
-    username: displayName,
-  });
+  // const postedMessageToSenderChannel = await client.chat.postMessage({
+  //   channel: senderChannelId,
+  //   text: messageToSend,
+  //   icon_url: userIcon,
+  //   username: displayName,
+  // });
 
-  const recordFromSender = await recordMessageFromCommand(
-    postedMessageToSenderChannel,
+  const recordFromSender = await recordOriginalMessage(
+    message,
     senderUserId,
     senderChannelId,
     "SENDER"
   );
+
+  const tempChannel = getChannels(messageToSend);
+
+  const validTempChannel = tempChannel.filter((channel) =>
+    validChannels.includes(`#${channel.toLowerCase()}`)
+  );
+
+  const capitalize = (channel) =>
+    channel.charAt(0).toUpperCase() + channel.slice(1);
+
+  const formattedChannels = validTempChannel.map(capitalize);
+  let confirmationMessageSent;
+  if (formattedChannels.length > 1) {
+    const lastChannel = formattedChannels.pop(); // Get the last channel for conjunction
+    confirmationMessageSent = `Your message has been sent to ${formattedChannels.join(
+      ", "
+    )} and ${lastChannel} group.`;
+  } else {
+    confirmationMessageSent = `Your message has been sent to ${formattedChannels[0]} group.`;
+  }
+
+  await client.chat.postMessage({
+    channel: message.channel,
+    text: confirmationMessageSent,
+    thread_ts: message.ts,
+  });
 
   involvedMessageIds.push(recordFromSender.id);
 

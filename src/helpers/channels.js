@@ -1,6 +1,9 @@
 import "dotenv/config";
-export const getChannelId = (text) => {
-  const channels = getChannel(text);
+
+export const validChannels = ["#finance", "#support"];
+
+export const getChannelIds = (text) => {
+  const channels = getChannels(text);
   if (channels === null || channels.length === 0) return null;
 
   const returnChannel = [];
@@ -14,14 +17,14 @@ export const getChannelId = (text) => {
   return returnChannel;
 };
 
-const getChannel = (text) => {
+export const getChannels = (text) => {
   return [...text.matchAll(/#([\w-]+)/g)].map((match) => match[1]);
 };
 
 export const isContainChannel = (text) => {
-  const channels = ["#finance", "#support"];
-
-  const containsChannel = channels.some((channel) => text.includes(channel));
+  const containsChannel = validChannels.some((channel) =>
+    text.includes(channel)
+  );
   console.log("containsChannel", containsChannel);
   return containsChannel;
 };
