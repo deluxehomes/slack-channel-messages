@@ -3,17 +3,16 @@ const { App, SocketModeReceiver, AwsLambdaReceiver } = pkg;
 import { registerListeners } from "./listeners/index.js";
 import { connect, isDbConnected } from "./database/db-connect.js";
 
-const socketReceiver = new SocketModeReceiver({
-  appToken: process.env.SLACK_APP_TOKEN,
-  installerOptions: {
-    port: process.env.PORT,
-  },
-});
+// const socketReceiver = new SocketModeReceiver({
+//   appToken: process.env.SLACK_APP_TOKEN,
+//   installerOptions: {
+//     port: process.env.PORT,
+//   },
+// });
 
-const awsLambdaReceiver = new AwsLambdaReceiver({
-  signingSecret: process.env.SLACK_SIGNING_SECRET,
-  // appToken: process.env.SLACK_APP_TOKEN,
-});
+// const awsLambdaReceiver = new AwsLambdaReceiver({
+//   signingSecret: process.env.SLACK_SIGNING_SECRET,
+// });
 
 // const app = new App({
 //   receiver: receiver,
