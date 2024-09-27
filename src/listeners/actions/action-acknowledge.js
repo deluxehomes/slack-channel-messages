@@ -9,6 +9,7 @@ import {
   recordMessage,
 } from "../../helpers/message-helper.js";
 import { ClickUp } from "../../services/clickup.js";
+import "dotenv/config";
 
 export const actionAcknowledge = async ({
   action,

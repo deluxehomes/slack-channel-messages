@@ -6,7 +6,7 @@
 import { recordMessageFromCommand } from "../../helpers/message-helper.js";
 import { Issue } from "../../database/model/issue-model.js";
 import { convertUserFromText } from "../../helpers/users.js";
-
+import "dotenv/config";
 export const supportChannelCommand = async ({
   command,
   ack,

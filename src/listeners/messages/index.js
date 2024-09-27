@@ -2,7 +2,7 @@ import { messageThread } from "./message-thread.js";
 import { Issue } from "../../database/model/issue-model.js";
 import { Message } from "../../database/model/message-model.js";
 import { constructClickUpNotification } from "../../helpers/message-constructor.js";
-
+import "dotenv/config";
 const noBotMessages = async ({ message, next }) => {
   // console.log("message", message);
 

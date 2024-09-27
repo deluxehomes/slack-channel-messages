@@ -2,6 +2,7 @@ import pkg from "@slack/bolt";
 const { App, SocketModeReceiver, AwsLambdaReceiver } = pkg;
 import { registerListeners } from "./listeners/index.js";
 import { connect, isDbConnected } from "./database/db-connect.js";
+import "dotenv/config";
 
 // const socketReceiver = new SocketModeReceiver({
 //   appToken: process.env.SLACK_APP_TOKEN,
