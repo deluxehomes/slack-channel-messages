@@ -21,10 +21,18 @@ const issueSchema = mongoose.Schema({
     type: ObjectId,
     ref: "Message",
   },
-  receiver_message_id: {
-    type: ObjectId,
-    ref: "Message",
-  },
+  receiver_message_id: [
+    {
+      type: ObjectId,
+      ref: "Message",
+    },
+  ],
+  involve_message_id: [
+    {
+      type: ObjectId,
+      ref: "Message",
+    },
+  ],
   // status: {
   //   type: String,
   //   enum: IssueStatus,

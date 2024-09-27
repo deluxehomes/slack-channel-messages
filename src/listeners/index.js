@@ -1,7 +1,7 @@
 import { commandRegister } from "./commands/index.js";
 import { viewRegister } from "./views/index.js";
 import { actionRegister } from "./actions/index.js";
-
+// import { eventRegister } from "./events/index.js";
 import { messageRegister } from "./messages/index.js";
 
 export const registerListeners = (app) => {
@@ -9,4 +9,5 @@ export const registerListeners = (app) => {
   viewRegister(app);
   actionRegister(app);
   messageRegister(app);
+  // eventRegister(app);
 };

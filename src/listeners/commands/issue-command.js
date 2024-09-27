@@ -11,7 +11,7 @@ export const issueCommand = async ({
 }) => {
   await ack();
 
-  // console.log("body", body);
+  console.log("body", body);
 
   // console.log("command", command);
 

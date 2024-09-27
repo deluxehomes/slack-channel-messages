@@ -2,7 +2,8 @@ import { Message } from "../../database/model/message-model.js";
 import { Issue } from "../../database/model/issue-model.js";
 // import { findIssueRecordByMessageId } from "../../helpers/message-helper.js";
 import { convertUserFromText } from "../../helpers/users.js";
-
+import { hashMessage } from "./process-hash-messages.js";
+import { isContainChannel } from "../../helpers/channels.js";
 export const messageThread = async ({
   context,
   client,
@@ -19,6 +20,12 @@ export const messageThread = async ({
 
   // console.log("payload", payload);
   let messageToSend = message.text;
+
+  if (messageToSend.indexOf("#") > -1 && isContainChannel(messageToSend)) {
+    hashMessage(messageToSend, client, message.channel, message.user);
+    return;
+  }
+
   messageToSend = convertUserFromText(messageToSend);
 
   const threadTs = message.thread_ts;
@@ -28,17 +35,23 @@ export const messageThread = async ({
 
   let issueRecord;
   let recordToSend;
+  let involveMessageIds;
   if (messageType === "RECEIVER") {
     issueRecord = await Issue.findOne({
-      receiver_message_id: messageRecord.id,
+      receiver_message_id: { $in: [messageRecord.id] },
     });
 
-    recordToSend = await Message.findById(issueRecord.sender_message_id);
+    involveMessageIds = issueRecord.involve_message_id;
+
+    // recordToSend = await Message.findById(issueRecord.sender_message_id);
   } else {
     issueRecord = await Issue.findOne({
       sender_message_id: messageRecord.id,
     });
-    recordToSend = await Message.findById(issueRecord.receiver_message_id);
+
+    involveMessageIds = issueRecord.involve_message_id;
+
+    // recordToSend = await Message.findById(issueRecord.receiver_message_id);
   }
   // console.log("recordToSend", recordToSend);
 
@@ -48,8 +61,8 @@ export const messageThread = async ({
     user: senderUserId,
   });
 
-  const userIcon = userInfo.user.profile.image_original;
   const displayName = userInfo.user.profile.display_name;
+  if (displayName === "") displayName = userInfo.user.profile.real_name;
 
   const fileUploads = message.files;
 
@@ -67,12 +80,22 @@ export const messageThread = async ({
   }
 
   const receiverMessage = `${displayName}: ${messageToSend}`;
-  await client.chat.postMessage({
-    channel: recordToSend.channel,
-    text: receiverMessage,
-    thread_ts: recordToSend.ts,
 
-    // icon_url: userIcon,
-    // username: displayName,
-  });
+  console.log("involveMessageIds", involveMessageIds);
+  console.log("messageRecord.id", messageRecord.id);
+  for (let messageId of involveMessageIds) {
+    console.log("messageId", messageId);
+
+    if (messageId.equals(messageRecord.id)) continue;
+
+    console.log("passed messageId", messageId);
+
+    recordToSend = await Message.findById(messageId);
+
+    await client.chat.postMessage({
+      channel: recordToSend.channel,
+      text: receiverMessage,
+      thread_ts: recordToSend.ts,
+    });
+  }
 };

@@ -4,8 +4,7 @@ import { Message } from "../../database/model/message-model.js";
 import { constructClickUpNotification } from "../../helpers/message-constructor.js";
 import "dotenv/config";
 const noBotMessages = async ({ message, next }) => {
-  // console.log("message", message);
-
+  console.log("message", message);
   const threadTs = message.thread_ts;
   if (
     (message.bot_id === undefined || message.text.startsWith("<!channel>")) &&
@@ -15,9 +14,19 @@ const noBotMessages = async ({ message, next }) => {
   ) {
     await next();
   }
+
+  if (
+    message.bot_id === undefined &&
+    message.previous_message?.bot_id === undefined &&
+    message.type === "message" &&
+    message.text.indexOf("#") > -1
+  ) {
+    await next();
+  }
 };
 
 const clickupMessage = async ({ message, next, client }) => {
+  // console.log("message", message);
   if (message.bot_id === undefined) {
     await next();
     return;
