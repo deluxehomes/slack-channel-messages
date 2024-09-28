@@ -135,8 +135,8 @@ export const hashMessage = async (message, client) => {
     channel: message.channel,
     text: confirmationMessageSent,
     thread_ts: message.ts,
-    icon_url: userIcon,
-    username: displayName,
+    // icon_url: userIcon,
+    // username: displayName,
   });
 
   involvedMessageIds.push(recordFromSender.id);
