@@ -38,6 +38,8 @@ const app = new App({
 });
 
 registerListeners(app);
+app.command();
+app.message();
 
 // comment this if running aws lambda
 (async () => {

@@ -18,12 +18,6 @@ export const supportChannelCommand = async ({
 }) => {
   await ack();
 
-  //   console.log("body", body);
-
-  //   console.log("command", command);
-
-  //   console.log("payload", payload);
-
   const adminChannelID = process.env.SUPPORT_CHANNEL_ID;
   const senderChannelId = command.channel_id;
 

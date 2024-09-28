@@ -6,6 +6,7 @@
 import { recordMessageFromCommand } from "../../helpers/message-helper.js";
 import { Issue } from "../../database/model/issue-model.js";
 import { convertUserFromText } from "../../helpers/users.js";
+import { constructMessageToSend } from "../../helpers/message-constructor.js";
 import "dotenv/config";
 export const financeChannelCommand = async ({
   command,
@@ -16,7 +17,7 @@ export const financeChannelCommand = async ({
   body,
   client,
 }) => {
-  ack();
+  await ack();
 
   //   console.log("body", body);
 
@@ -47,40 +48,53 @@ export const financeChannelCommand = async ({
   let displayName = userInfo.user.profile.display_name;
   if (displayName === "") displayName = userInfo.user.profile.real_name;
 
-  const receiverMessage = `${displayName}: ${commandMessage}`;
-  const postedMessageToAdminChannel = await client.chat.postMessage({
-    channel: adminChannelID,
-    text: receiverMessage,
-    // icon_url: userIcon,
-    // username: username,
-  });
+  const receiverMessage = `*[${displayName}]:* ${commandMessage}`;
 
-  // console.log(postedMessageToAdminChannel);
-
-  const recordFromReceiver = await recordMessageFromCommand(
-    postedMessageToAdminChannel,
-    senderUserId,
-    senderChannelId,
-    "RECEIVER"
+  const receiverMessageJson = constructMessageToSend(
+    receiverMessage,
+    adminChannelID,
+    senderChannelId
   );
 
-  const postedMessageToSenderChannel = await client.chat.postMessage({
-    channel: senderChannelId,
-    text: commandMessage,
-    icon_url: userIcon,
-    username: displayName,
-  });
+  // const postedMessageToAdminChannel = await client.chat.postMessage({
+  //   channel: adminChannelID,
+  //   text: receiverMessage,
+  // });
 
-  const recordFromSender = await recordMessageFromCommand(
-    postedMessageToSenderChannel,
-    senderUserId,
-    senderChannelId,
-    "SENDER"
+  const postedMessageToAdminChannel = await client.chat.postMessage(
+    JSON.parse(receiverMessageJson)
   );
 
-  // console.log(postedMessageToSenderChannel);
-  await Issue.create({
-    sender_message_id: recordFromSender.id,
-    receiver_message_id: recordFromReceiver.id,
-  });
+  // const recordFromReceiver = await recordMessageFromCommand(
+  //   postedMessageToAdminChannel,
+  //   senderUserId,
+  //   senderChannelId,
+  //   "RECEIVER"
+  // );
+
+  // const postedMessageToSenderChannel = await client.chat.postMessage({
+  //   channel: senderChannelId,
+  //   text: commandMessage,
+  //   icon_url: userIcon,
+  //   username: displayName,
+  // });
+
+  // const recordFromSender = await recordMessageFromCommand(
+  //   postedMessageToSenderChannel,
+  //   senderUserId,
+  //   senderChannelId,
+  //   "SENDER"
+  // );
+
+  // // console.log(postedMessageToSenderChannel);
+  // // await Issue.create({
+  // //   sender_message_id: recordFromSender.id,
+  // //   receiver_message_id: recordFromReceiver.id,
+  // // });
+
+  // await Issue.create({
+  //   sender_message_id: recordFromSender.id,
+  //   receiver_message_id: [recordFromReceiver.id],
+  //   involve_message_id: [recordFromReceiver.id, recordFromSender.id],
+  // });
 };

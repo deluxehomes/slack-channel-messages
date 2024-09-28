@@ -2,13 +2,20 @@ import { messageThread } from "./message-thread.js";
 import { Issue } from "../../database/model/issue-model.js";
 import { Message } from "../../database/model/message-model.js";
 import { constructClickUpNotification } from "../../helpers/message-constructor.js";
+import { isContainChannel } from "../../helpers/channels.js";
+import { hashMessage } from "./process-hash-messages.js";
+import { helpMessage } from "./help-message.js";
 import "dotenv/config";
-const noBotMessages = async ({ message, next }) => {
-  console.log("message", message);
+
+const noBotMessages = async ({ message, next, client }) => {
+  // console.log("message", message);
   const threadTs = message.thread_ts;
+
   if (
-    (message.bot_id === undefined || message.text.startsWith("<!channel>")) &&
+    message.bot_id === undefined &&
     message.previous_message?.bot_id === undefined &&
+    // message.type === "message" &&
+    // message.text.indexOf("#") > -1 &&
     threadTs != null &&
     threadTs !== undefined
   ) {
@@ -19,9 +26,15 @@ const noBotMessages = async ({ message, next }) => {
     message.bot_id === undefined &&
     message.previous_message?.bot_id === undefined &&
     message.type === "message" &&
-    message.text.indexOf("#") > -1
+    // message.text.indexOf("#") > -1 &&
+    (message.text.indexOf("#") > -1 || message.text.indexOf("@") > -1) &&
+    (threadTs == null || threadTs === undefined)
   ) {
-    await next();
+    if (isContainChannel(message.text)) {
+      hashMessage(message, client);
+      return;
+    }
+    return;
   }
 };
 
@@ -81,6 +94,13 @@ const clickupMessage = async ({ message, next, client }) => {
   await client.chat.postMessage(JSON.parse(clickUpMessage));
 };
 
+const help = async ({ message, next, client, say }) => {
+  if (message.text === "@help" || message.text === "#help") {
+    helpMessage(message, say, client);
+  }
+};
+
 export const messageRegister = (app) => {
   app.message(clickupMessage, noBotMessages, messageThread);
+  app.message(help);
 };

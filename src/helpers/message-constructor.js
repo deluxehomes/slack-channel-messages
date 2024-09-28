@@ -123,3 +123,19 @@ export const constructClickUpNotification = (
     )
     .buildToJSON();
 };
+
+export const constructMessageToSend = (text, channelId, senderChannelId) => {
+  return Message({
+    channel: channelId,
+    text: text,
+  })
+    .blocks(
+      Blocks.Section({
+        text: text,
+      }),
+      Blocks.Context({
+        blockId: "context-id",
+      }).elements(Md.channel(senderChannelId))
+    )
+    .buildToJSON();
+};

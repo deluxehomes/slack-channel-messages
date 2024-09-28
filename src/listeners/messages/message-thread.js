@@ -1,9 +1,8 @@
 import { Message } from "../../database/model/message-model.js";
 import { Issue } from "../../database/model/issue-model.js";
-// import { findIssueRecordByMessageId } from "../../helpers/message-helper.js";
 import { convertUserFromText } from "../../helpers/users.js";
-import { hashMessage } from "./process-hash-messages.js";
-import { isContainChannel } from "../../helpers/channels.js";
+import { channel } from "slack-block-builder";
+
 export const messageThread = async ({
   context,
   client,
@@ -13,24 +12,19 @@ export const messageThread = async ({
   payload,
   event,
 }) => {
-  //   console.log("context", context);
-  //   console.log("body", body);
+  const threadTs = message.thread_ts;
+  const senderChannelId = message.channel;
 
-  // console.log("message", message);
+  const messageRecord = await Message.findOne({
+    ts: threadTs,
+    channel: senderChannelId,
+  });
+  if (messageRecord == null || messageRecord === undefined) return;
 
-  // console.log("payload", payload);
   let messageToSend = message.text;
-
-  if (messageToSend.indexOf("#") > -1 && isContainChannel(messageToSend)) {
-    hashMessage(message, client);
-    return;
-  }
 
   messageToSend = convertUserFromText(messageToSend);
 
-  const threadTs = message.thread_ts;
-
-  const messageRecord = await Message.findOne({ ts: threadTs });
   const messageType = messageRecord.message_type; //RECEIVER | SENDER
 
   let issueRecord;
@@ -81,14 +75,14 @@ export const messageThread = async ({
 
   const receiverMessage = `${displayName}: ${messageToSend}`;
 
-  console.log("involveMessageIds", involveMessageIds);
-  console.log("messageRecord.id", messageRecord.id);
+  // console.log("involveMessageIds", involveMessageIds);
+  // console.log("messageRecord.id", messageRecord.id);
   for (let messageId of involveMessageIds) {
     console.log("messageId", messageId);
 
     if (messageId.equals(messageRecord.id)) continue;
 
-    console.log("passed messageId", messageId);
+    // console.log("passed messageId", messageId);
 
     recordToSend = await Message.findById(messageId);
 
