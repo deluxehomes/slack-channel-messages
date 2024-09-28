@@ -3,6 +3,7 @@ import {
   getChannelIds,
   hashValidChannels,
   atValidChannels,
+  slashValidChannels,
   getHashChannels,
   getAtChannels,
 } from "../../helpers/channels.js";
@@ -95,7 +96,13 @@ export const hashMessage = async (message, client) => {
     atValidChannels.includes(`@${channel.toLowerCase()}`)
   );
 
-  const validTempChannel = hashValidTempChannel.concat(atValidTempChannel);
+  const slashValidTempChannel = atTempChannel.filter((channel) =>
+    slashValidChannels.includes(`/${channel.toLowerCase()}`)
+  );
+
+  const validTempChannel = hashValidTempChannel
+    .concat(atValidTempChannel)
+    .concat(slashValidTempChannel);
 
   const capitalize = (channel) =>
     channel.charAt(0).toUpperCase() + channel.slice(1);

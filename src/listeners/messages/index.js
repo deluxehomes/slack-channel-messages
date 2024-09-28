@@ -8,7 +8,7 @@ import { helpMessage } from "./help-message.js";
 import "dotenv/config";
 
 const noBotMessages = async ({ message, next, client }) => {
-  // console.log("message", message);
+  console.log("message", message);
   const threadTs = message.thread_ts;
 
   if (
@@ -27,7 +27,9 @@ const noBotMessages = async ({ message, next, client }) => {
     message.previous_message?.bot_id === undefined &&
     message.type === "message" &&
     // message.text.indexOf("#") > -1 &&
-    (message.text.indexOf("#") > -1 || message.text.indexOf("@") > -1) &&
+    (message.text.indexOf("#") > -1 ||
+      message.text.indexOf("@") > -1 ||
+      message.text.indexOf("/") > -1) &&
     (threadTs == null || threadTs === undefined)
   ) {
     if (isContainChannel(message.text)) {

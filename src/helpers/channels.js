@@ -2,12 +2,15 @@ import "dotenv/config";
 
 export const hashValidChannels = ["#finance", "#support"];
 export const atValidChannels = ["@finance", "@support"];
+export const slashValidChannels = ["/finance", "/support"];
 
 export const getChannelIds = (text) => {
   const hashChannels = getHashChannels(text);
   const atChannels = getAtChannels(text);
+  const slashChannels = getSlashChannels(text);
 
-  const channels = hashChannels.concat(atChannels);
+  let channels = hashChannels.concat(atChannels).concat(slashChannels);
+
   if (channels === null || channels.length === 0) return null;
 
   const returnChannel = [];
@@ -29,6 +32,10 @@ export const getAtChannels = (text) => {
   return [...text.matchAll(/@([\w-]+)/g)].map((match) => match[1]);
 };
 
+export const getSlashChannels = (text) => {
+  return [...text.matchAll(/\/([\w-]+)/g)].map((match) => match[1]);
+};
+
 export const isContainChannel = (text) => {
   const hashContainsChannel = hashValidChannels.some((channel) =>
     text.includes(channel)
@@ -38,6 +45,10 @@ export const isContainChannel = (text) => {
     text.includes(channel)
   );
 
+  const slashContainsChannel = slashValidChannels.some((channel) =>
+    text.includes(channel)
+  );
+
   // console.log("containsChannel", containsChannel);
-  return hashContainsChannel || atContainsChannel;
+  return hashContainsChannel || atContainsChannel || slashContainsChannel;
 };
