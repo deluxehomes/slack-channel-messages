@@ -8,3 +8,21 @@ MONGO_DB_URL=""
 
 FINANCE_CHANNEL_ID=""
 SUPPORT_CHANNEL_ID=""
+
+
+
+sudo vim /etc/slack-app.env
+
+sudo chmod 600 /etc/slack-app.env
+sudo chown ubuntu:ubuntu /etc/slack-app.env
+
+sudo vim /etc/systemd/system/slack-app.service
+
+sudo systemctl daemon-reload
+sudo systemctl enable slack-app.service
+sudo systemctl start slack-app.service
+
+
+sudo systemctl restart slack-app.service
+
+sudo systemctl status slack-app.service
