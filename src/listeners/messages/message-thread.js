@@ -55,6 +55,7 @@ export const messageThread = async ({
     user: senderUserId,
   });
 
+  const userIcon = userInfo.user.profile.image_original;
   const displayName = userInfo.user.profile.display_name;
   if (displayName === "") displayName = userInfo.user.profile.real_name;
 
@@ -73,10 +74,8 @@ export const messageThread = async ({
     messageToSend = messageToSend + `${images}`;
   }
 
-  const receiverMessage = `*[${displayName}]:* ${messageToSend}`;
-  // let receiverMessageJson;
-  // console.log("involveMessageIds", involveMessageIds);
-  // console.log("messageRecord.id", messageRecord.id);
+  const receiverMessage = `${messageToSend}`;
+
   for (let messageId of involveMessageIds) {
     // console.log("messageId", messageId);
 
@@ -86,19 +85,12 @@ export const messageThread = async ({
 
     recordToSend = await Message.findById(messageId);
 
-    // receiverMessageJson = constructMessageToSend(
-    //   receiverMessage,
-    //   channelId,
-    //   senderChannelId,
-    //   recordToSend.ts
-    // );
-
     await client.chat.postMessage({
       channel: recordToSend.channel,
       text: receiverMessage,
       thread_ts: recordToSend.ts,
+      icon_url: userIcon,
+      username: displayName,
     });
-
-    // await client.chat.postMessage(JSON.parse(receiverMessageJson));
   }
 };

@@ -124,7 +124,12 @@ export const constructClickUpNotification = (
     .buildToJSON();
 };
 
-export const constructMessageToSend = (text, channelId, senderChannelId) => {
+export const constructMessageToSend = (text, channelId, channelName) => {
+  // const channelName = Md.channel(senderChannelId);
+
+  // console.log(channelName);
+  // console.log(senderChannelId);
+
   return Message({
     channel: channelId,
     text: text,
@@ -135,7 +140,7 @@ export const constructMessageToSend = (text, channelId, senderChannelId) => {
       }),
       Blocks.Context({
         blockId: "context-id",
-      }).elements(Md.channel(senderChannelId))
+      }).elements(channelName)
     )
     .buildToJSON();
 };

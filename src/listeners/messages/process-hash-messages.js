@@ -30,6 +30,10 @@ export const hashMessage = async (message, client) => {
 
   const fileUploads = message.files;
 
+  const channelInfo = await client.conversations.info({
+    channel: senderChannelId,
+  });
+
   const userInfo = await client.users.info({
     user: senderUserId,
   });
@@ -51,22 +55,29 @@ export const hashMessage = async (message, client) => {
     messageToSend = messageToSend + `${images}`;
   }
 
-  const receiverMessage = `*[${displayName}]:* ${messageToSend}`;
+  const receiverMessage = `${messageToSend}`;
   const receiverIds = [];
   const involvedMessageIds = [];
   let receiverMessageJson;
   for (let channelId of channelIds) {
-    receiverMessageJson = constructMessageToSend(
-      receiverMessage,
-      channelId,
-      senderChannelId
+    receiverMessageJson = JSON.parse(
+      constructMessageToSend(
+        receiverMessage,
+        channelId,
+        channelInfo.channel.name
+      )
     );
+
+    receiverMessageJson.username = displayName;
+    receiverMessageJson.icon_url = userIcon;
+
+    // console.log("receiverMessageJson", receiverMessageJson);
 
     if (senderChannelId === channelId) continue;
     // console.log("channelId", channelId);
 
     const postedMessageToAdminChannel = await client.chat.postMessage(
-      JSON.parse(receiverMessageJson)
+      receiverMessageJson
     );
 
     const recordFromReceiver = await recordMessageFromCommand(
@@ -124,6 +135,8 @@ export const hashMessage = async (message, client) => {
     channel: message.channel,
     text: confirmationMessageSent,
     thread_ts: message.ts,
+    icon_url: userIcon,
+    username: displayName,
   });
 
   involvedMessageIds.push(recordFromSender.id);
