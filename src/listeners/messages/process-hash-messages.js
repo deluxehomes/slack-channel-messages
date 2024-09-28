@@ -6,6 +6,7 @@ import {
   slashValidChannels,
   getHashChannels,
   getAtChannels,
+  getSlashChannels,
 } from "../../helpers/channels.js";
 import {
   recordMessageFromCommand,
@@ -87,6 +88,7 @@ export const hashMessage = async (message, client) => {
 
   const hashTempChannel = getHashChannels(messageToSend);
   const atTempChannel = getAtChannels(messageToSend);
+  const slashTempChannel = getSlashChannels(messageToSend);
 
   const hashValidTempChannel = hashTempChannel.filter((channel) =>
     hashValidChannels.includes(`#${channel.toLowerCase()}`)
@@ -96,7 +98,7 @@ export const hashMessage = async (message, client) => {
     atValidChannels.includes(`@${channel.toLowerCase()}`)
   );
 
-  const slashValidTempChannel = atTempChannel.filter((channel) =>
+  const slashValidTempChannel = slashTempChannel.filter((channel) =>
     slashValidChannels.includes(`/${channel.toLowerCase()}`)
   );
 
