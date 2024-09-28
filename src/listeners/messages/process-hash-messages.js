@@ -52,9 +52,9 @@ export const hashMessage = async (message, client) => {
   const receiverMessage = `*[${displayName}]:* ${messageToSend}`;
   const receiverIds = [];
   const involvedMessageIds = [];
-
+  let receiverMessageJson;
   for (let channelId of channelIds) {
-    const receiverMessageJson = constructMessageToSend(
+    receiverMessageJson = constructMessageToSend(
       receiverMessage,
       channelId,
       senderChannelId

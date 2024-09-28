@@ -1,7 +1,7 @@
 import { Message } from "../../database/model/message-model.js";
 import { Issue } from "../../database/model/issue-model.js";
 import { convertUserFromText } from "../../helpers/users.js";
-import { channel } from "slack-block-builder";
+// import { constructMessageToSend } from "../../helpers/message-constructor.js";
 
 export const messageThread = async ({
   context,
@@ -73,12 +73,12 @@ export const messageThread = async ({
     messageToSend = messageToSend + `${images}`;
   }
 
-  const receiverMessage = `${displayName}: ${messageToSend}`;
-
+  const receiverMessage = `*[${displayName}]:* ${messageToSend}`;
+  // let receiverMessageJson;
   // console.log("involveMessageIds", involveMessageIds);
   // console.log("messageRecord.id", messageRecord.id);
   for (let messageId of involveMessageIds) {
-    console.log("messageId", messageId);
+    // console.log("messageId", messageId);
 
     if (messageId.equals(messageRecord.id)) continue;
 
@@ -86,10 +86,19 @@ export const messageThread = async ({
 
     recordToSend = await Message.findById(messageId);
 
+    // receiverMessageJson = constructMessageToSend(
+    //   receiverMessage,
+    //   channelId,
+    //   senderChannelId,
+    //   recordToSend.ts
+    // );
+
     await client.chat.postMessage({
       channel: recordToSend.channel,
       text: receiverMessage,
       thread_ts: recordToSend.ts,
     });
+
+    // await client.chat.postMessage(JSON.parse(receiverMessageJson));
   }
 };
